@@ -1,0 +1,42 @@
+import requests
+import json
+
+def get_weather(city_name, api_key):
+    base_url = "https://api.openweathermap.org/data/2.5/weather"
+    params = {
+        'q': city_name,
+        'appid': api_key,
+        'units': 'metric',
+        'lang': 'ru'
+    }
+
+    try:
+        response = requests.get(base_url, params=params)
+        response.raise_for_status()
+        weather_data = response.json()
+
+        city = weather_data['name']
+        temp = weather_data['main']['temp']
+        humidity = weather_data['main']['humidity']
+        pressure = weather_data['main']['pressure']
+        wind_speed = weather_data['wind']['speed']
+        weather_desc = weather_data['weather'][0]['description']
+        visibility = weather_data.get('visibility', 'N/A')
+
+        print(f"Погода в городе {city}:")
+        print(f"Температура: {temp}°C")
+        print(f"Влажность: {humidity}%")
+        print(f"Давление: {pressure} гПа")
+        print(f"Скорость ветра: {wind_speed} м/с")
+        print(f"Описание: {weather_desc.capitalize()}")
+        print(f"Видимость: {visibility} метров")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Ошибка при запросе к API: {e}")
+    except KeyError as e:
+        print(f"Ошибка при обработке данных: {e}")
+
+if __name__ == "__main__":
+    api_key = "984f82a4277118d5d60a4ab9d18ddefd" 
+    city_name = "Madrid"
+    get_weather(city_name, api_key)
